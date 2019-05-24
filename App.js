@@ -1,0 +1,343 @@
+import React from 'react'
+import { TouchableOpacity, Image, View, Text, Platform, Dimensions, StyleSheet, ScrollView, Button } from 'react-native'
+import Marker from 'react-native-image-marker'
+import Picker from 'react-native-image-picker'
+import { captureScreen } from "react-native-view-shot";
+const icon = require('./icon.jpeg')
+const bg = require('./bg.png')
+const base64Bg = require('./bas64bg').default
+
+const { width } = Dimensions.get('window')
+
+const s = StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: 20
+    },
+    op: {
+        marginTop: 20,
+        justifyContent: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap'
+    },
+    btn: {
+        padding: 10,
+        borderRadius: 3,
+        backgroundColor: '#00BF00',
+        margin: 5,
+        marginTop: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    text: {
+        fontSize: 15,
+        color: 'white'
+    },
+    preview: {
+        width,
+        height: 300,
+        flex: 1
+    }
+})
+
+export default class MarkerTest extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            uri: '',
+            image: base64Bg,
+            marker: icon,
+            markImage: true,
+            imageURI : 'https://reactnativecode.com/wp-content/uploads/2018/02/motorcycle.jpg'
+        }
+    }
+
+    sacePic() {
+        Picker.launchCamera(storageOptions.camera, (responce) => {
+            const file = {
+                uri: responce.uri,
+                name: responce.fileName,
+                method: 'POST',
+                path: responce.path,
+                type: responce.type,
+                notification: {
+                    enabled: true
+                }
+            }
+            this.state.saveImages.push(file);
+
+        })
+    }
+
+    captureScreenFunction = () => {
+
+        captureScreen({
+            format: "jpg",
+            quality: 0.8
+        })
+            .then(
+                uri => this.setState({ imageURI: uri }),
+                error => console.error("Oops, Something Went Wrong", error)
+            );
+
+    }
+
+    _switch = () => {
+        this.setState({
+            markImage: !this.state.markImage
+        })
+    }
+
+    render() {
+        return (
+            <ScrollView style={s.container}>
+                <View>
+                    <TouchableOpacity
+                        style={[s.btn, { backgroundColor: '#FF7043' }]}
+                        onPress={this._switch}
+                    >
+                        <Text style={s.text}>switch mark {this.state.markImage ? 'image' : 'text'}</Text>
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <TouchableOpacity
+                        style={[s.btn, { backgroundColor: '#2296F3' }]}
+                        onPress={() => this._pickImage('image')}
+                    >
+                        <Text style={s.text}>pick image</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[s.btn, { backgroundColor: '#2296F3' }]}
+                        onPress={() => this._pickImage('mark')}
+                    >
+                        <Text style={s.text}>pick an image for mark</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={s.op}>
+
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={this._mark}
+                    >
+                        <Text style={s.text} >mark</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('topLeft')}
+                    >
+                        <Text style={s.text} >TopLeft</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('topCenter')}
+                    >
+                        <Text style={s.text} >topCenter</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('topRight')}
+                    >
+                        <Text style={s.text} >topRight</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('center')}
+                    >
+                        <Text style={s.text} >Center</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('bottomLeft')}
+                    >
+                        <Text style={s.text} >bottomLeft</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('bottomCenter')}
+                    >
+                        <Text style={s.text} >bottomCenter</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={s.btn}
+                        onPress={() => this._markByPosition('bottomRight')}
+                    >
+                        <Text style={s.text} >bottomRight</Text>
+                    </TouchableOpacity>
+                </View>
+                <View
+                    style={{ flex: 1 }}
+                >
+                    {
+                        this.state.show
+                            ? <Image source={{ uri: this.state.uri }} resizeMode='contain' style={s.preview} />
+                            : null
+                    }
+                </View>
+                {this.state.show ?
+                    <View style={{ marginTop: 20, justifyContent: "center", alignItems: 'center' }}>
+                        <Button title="Save" onPress={this.captureScreenFunction} />
+                    </View>
+                    :
+                    null
+                }
+
+
+
+            </ScrollView>
+
+        )
+    }
+
+    _markByPosition = (type) => {
+        if (this.state.markImage) {
+            Marker.markImage({
+                src: this.state.image,
+                markerSrc: base64Bg,
+                position: type,
+                scale: 1,
+                markerScale: 1,
+                quality: 100
+            }).then((path) => {
+                console.log('====================================');
+                console.log(path);
+                console.log('====================================');
+                this.setState({
+                    uri: Platform.OS === 'android' ? 'file://' + path : path,
+                    show: true
+                })
+            }).catch((err) => {
+                console.log('====================================')
+                console.log(err, 'err')
+                console.log('====================================')
+            })
+        } else {
+            Marker.markText({
+                src: this.state.image,
+                text: `Abhinit`,
+                position: type,
+                color: '#ce582d',
+                fontName: 'Arial-BoldItalicMT',
+                fontSize: 44,
+                scale: 1,
+                quality: 100,
+                shadowStyle: {
+                    dx: 10.5,
+                    dy: 20.8,
+                    radius: 20.9,
+                    color: '#ff00ff'
+                }
+            })
+                .then((path) => {
+                    console.log('====================================');
+                    console.log(path);
+                    console.log('====================================');
+                    this.setState({
+                        show: true,
+                        uri: Platform.OS === 'android' ? 'file://' + path : path
+                    })
+                }).catch((err) => {
+                    console.log('====================================')
+                    console.log(err)
+                    console.log('====================================')
+                })
+        }
+    }
+
+    _mark = () => {
+        if (this.state.markImage) {
+            Marker.markImage({
+                src: this.state.image,
+                markerSrc: this.state.marker,
+                X: 100,
+                Y: 150,
+                scale: 1,
+                markerScale: 0.5,
+                quality: 100
+            }).then((path) => {
+                console.log('====================================');
+                console.log(path);
+                console.log('====================================');
+                this.setState({
+                    uri: Platform.OS === 'android' ? 'file://' + path : path,
+                    show: true
+                })
+            }).catch((err) => {
+                console.log('====================================')
+                console.log(err, 'err')
+                console.log('====================================')
+            })
+        } else {
+            Marker.markText({
+                src: this.state.image,
+                text: 'Abhinit',
+                X: 30,
+                Y: 30,
+                color: '#ce582d',
+                fontName: 'Arial-BoldItalicMT',
+                fontSize: 44,
+                shadowStyle: {
+                    dx: 10.5,
+                    dy: 20.8,
+                    radius: 20.9,
+                    color: '#ff00ff'
+                },
+                scale: 1,
+                quality: 100
+            }).then((path) => {
+                console.log('====================================');
+                console.log(path);
+                console.log('====================================');
+                this.setState({
+                    show: true,
+                    uri: Platform.OS === 'android' ? 'file://' + path : path
+                })
+            }).catch((err) => {
+                console.log('====================================')
+                console.log(err)
+                console.log('====================================')
+            })
+        }
+    }
+
+    _pickImage = (type) => {
+        let options = {
+            title: 'title',
+            takePhotoButtonTitle: 'camera',
+            chooseFromLibraryButtonTitle: 'gallery',
+            cancelButtonTitle: 'cancel',
+            quality: 0.5,
+            mediaType: 'photo',
+            maxWidth: 2000,
+            noData: true,
+            maxHeight: 2000,
+            dateFormat: 'yyyy-MM-dd HH:mm:ss',
+            storageOptions: {
+                skipBackup: true,
+                path: 'imagePickerCache'
+            },
+            allowsEditing: false
+        }
+        Picker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled photo picker')
+            } else if (response.error) {
+                console.log('ImagePickerManager Error: ', response.error)
+            } else if (response.customButton) {
+                // this.showCamera();
+            } else {
+                // You can display the image using either:
+                // const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+                const uri = response.uri
+                if (type === 'image') {
+                    this.setState({
+                        image: uri
+                    })
+                } else {
+                    this.setState({
+                        marker: uri
+                    })
+                }
+            }
+        })
+    }
+}
