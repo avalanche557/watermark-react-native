@@ -3,7 +3,6 @@ package com.markerexample;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.jimmydaddy.imagemarker.ImageMarkerPackage;
 import com.facebook.react.ReactNativeHost;
@@ -26,7 +25,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNViewShotPackage(),
             new ImagePickerPackage(),
             new ImageMarkerPackage()
       );

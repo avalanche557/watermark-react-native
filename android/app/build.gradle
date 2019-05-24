@@ -154,7 +154,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-view-shot')
     compile project(':react-native-image-picker')
     compile project(':react-native-image-marker')
     implementation fileTree(dir: "libs", include: ["*.jar"])

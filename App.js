@@ -2,7 +2,6 @@ import React from 'react'
 import { TouchableOpacity, Image, View, Text, Platform, Dimensions, StyleSheet, ScrollView, Button } from 'react-native'
 import Marker from 'react-native-image-marker'
 import Picker from 'react-native-image-picker'
-import { captureScreen } from "react-native-view-shot";
 const icon = require('./icon.jpeg')
 const bg = require('./bg.png')
 const base64Bg = require('./bas64bg').default
@@ -69,18 +68,18 @@ export default class MarkerTest extends React.Component {
         })
     }
 
-    captureScreenFunction = () => {
+    // captureScreenFunction = () => {
 
-        captureScreen({
-            format: "jpg",
-            quality: 0.8
-        })
-            .then(
-                uri => this.setState({ imageURI: uri }),
-                error => console.error("Oops, Something Went Wrong", error)
-            );
+    //     captureScreen({
+    //         format: "jpg",
+    //         quality: 0.8
+    //     })
+    //         .then(
+    //             uri => this.setState({ imageURI: uri }),
+    //             error => console.error("Oops, Something Went Wrong", error)
+    //         );
 
-    }
+    // }
 
     _switch = () => {
         this.setState({
@@ -173,13 +172,13 @@ export default class MarkerTest extends React.Component {
                             : null
                     }
                 </View>
-                {this.state.show ?
+                {/* {this.state.show ?
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: 'center' }}>
                         <Button title="Save" onPress={this.captureScreenFunction} />
                     </View>
                     :
                     null
-                }
+                } */}
 
 
 
